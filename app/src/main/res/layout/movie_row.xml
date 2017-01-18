@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/movie_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/detail_text"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:contentDescription="@string/movie_cover"
+        android:scaleType="centerCrop"
+        android:transitionName="movie_cover" />
+    
+    <LinearLayout
+        android:id="@+id/movie_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/movie_title_holder"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/MovieItemText"
+            android:layout_width="0dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="3"
+            android:gravity="center_horizontal"
+            android:paddingLeft="10dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:transitionName="movie_title"
+            tool:text="Movie title" />
+
+
+    </LinearLayout>
+</LinearLayout>
