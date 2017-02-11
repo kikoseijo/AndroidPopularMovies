@@ -1,0 +1,669 @@
+Index: app/src/main/res/layout-land/fragment_detail.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-land/fragment_detail.xml	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/res/layout-land/fragment_detail.xml	(revision )
+@@ -14,19 +14,20 @@
+         android:focusableInTouchMode="true">
+ 
+         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-                android:layout_width="match_parent"
++            android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:orientation="vertical">
+ 
+             <LinearLayout
+-                    android:layout_width="match_parent"
+-                    android:layout_height="match_parent"
++                android:layout_width="match_parent"
++                android:layout_height="match_parent"
++                android:baselineAligned="false"
+                 android:orientation="horizontal"
+                 android:paddingTop="5dp"
+                 android:weightSum="10">
+ 
+                 <FrameLayout
+-                        android:layout_width="match_parent"
++                    android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_weight="6">
+ 
+@@ -35,6 +36,7 @@
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         android:layout_gravity="top"
++                        android:contentDescription="@string/movie_picture"
+                         android:paddingLeft="12dp"
+                         android:paddingRight="12dp"
+                         android:transitionName="movie_cover" />
+@@ -87,7 +89,7 @@
+ 
+             </LinearLayout>
+ 
+-            </LinearLayout>
++        </LinearLayout>
+ 
+     </ScrollView>
+ </LinearLayout>
+Index: app/src/main/res/layout-sw600dp/fragment_detail.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-sw600dp/fragment_detail.xml	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/res/layout-sw600dp/fragment_detail.xml	(revision )
+@@ -32,6 +32,7 @@
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
++                android:baselineAligned="false"
+                 android:orientation="horizontal"
+                 android:paddingTop="15dp"
+                 android:weightSum="10">
+@@ -47,6 +48,7 @@
+                         android:layout_height="match_parent"
+                         android:layout_gravity="center_horizontal"
+ 
++                        android:contentDescription="@string/movie_picture"
+                         android:transitionName="movie_cover" />
+                 </FrameLayout>
+ 
+Index: app/src/main/java/com/sunnyface/popularmovies/DetailActivityFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/sunnyface/popularmovies/DetailActivityFragment.java	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/java/com/sunnyface/popularmovies/DetailActivityFragment.java	(revision )
+@@ -6,7 +6,6 @@
+ import android.support.v7.app.AppCompatActivity;
+ import android.support.v7.widget.Toolbar;
+ import android.view.LayoutInflater;
+-import android.view.MenuItem;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.ViewTreeObserver;
+@@ -20,13 +19,12 @@
+ import com.sunnyface.popularmovies.models.Movie;
+ 
+ /**
+- * Created by smac on 14/01/2017.
++ * Created by Kiko Seijo on 14/01/2017.
++ * by The Sunnyface.com.
+  */
+ 
+ public class DetailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
+ 
+-    private Movie movie;
+-    private MenuItem menuItem;
+     private boolean isTabletLayout;
+ 
+     public DetailActivityFragment() {
+@@ -40,6 +38,7 @@
+         Bundle arguments = getArguments();
+ 
+         if (arguments != null) {
++            Movie movie;
+             if (arguments.getBoolean("isTabletLayout")) {
+                 isTabletLayout = true;
+                 movie = arguments.getParcelable("movie");
+@@ -109,7 +108,7 @@
+                 public void onGlobalLayout() {
+                     int width = imageView.getWidth();
+                     //Log.d("TEST", "Width = " + width + " Height = " + imageView.getHeight());
+-                    String imgUrl = movie.getImageUrl(imageView.getWidth(), "cover").toString();
++                    String imgUrl = movie.getImageUrl(width, "cover").toString();
+ 
+                     Picasso.with(getActivity())
+                             .load(imgUrl)
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/res/values/strings.xml	(revision )
+@@ -12,5 +12,7 @@
+     <string name="sort_popularity">popular</string>
+     <string name="sort_rating">top_rated</string>
+     <string name="empty_text">No movies found!</string>
++    <string name="movie_picture">Movie Picture</string>
++    <string name="no_connection">No connection</string>
+ 
+ </resources>
+Index: app/src/main/res/layout/movie_row.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/movie_row.xml	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/res/layout/movie_row.xml	(revision )
+@@ -20,6 +20,7 @@
+             android:id="@+id/thumbnail"
+             android:layout_width="match_parent"
+             android:layout_height="200dp"
++            android:contentDescription="@string/movie_picture"
+             android:scaleType="centerCrop"
+             android:transitionName="movie_cover" />
+ 
+@@ -42,6 +43,7 @@
+             <TextView
+                 android:id="@+id/title"
+                 style="@style/MovieItemText"
++                android:layout_width="0dp"
+                 android:layout_gravity="center_vertical"
+                 android:layout_weight="3"
+                 android:gravity="left"
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_main.xml	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/res/layout/fragment_main.xml	(revision )
+@@ -32,6 +32,7 @@
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerInParent="true"
++        android:contentDescription="@string/no_connection"
+         android:src="@drawable/disconnected"
+         android:visibility="gone" />
+ 
+Index: app/src/main/res/layout/fragment_detail.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_detail.xml	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/res/layout/fragment_detail.xml	(revision )
+@@ -12,8 +12,8 @@
+ 
+         <android.support.design.widget.CollapsingToolbarLayout
+             android:id="@+id/collapsingToolbarLayout"
+-                android:layout_width="match_parent"
+-                android:layout_height="match_parent"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent"
+             app:contentScrim="@color/detail_movie_header"
+             app:expandedTitleMarginBottom="15sp"
+             app:expandedTitleMarginStart="15sp"
+@@ -23,6 +23,7 @@
+                 android:id="@+id/poster"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
++                android:contentDescription="@string/movie_picture"
+                 android:scaleType="centerCrop"
+                 app:layout_collapseMode="parallax"
+                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
+@@ -51,19 +52,20 @@
+ 
+             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 android:id="@+id/detail_layout_back"
+-                    android:layout_width="match_parent"
++                android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:orientation="vertical">
+ 
+                 <LinearLayout
+-                        android:layout_width="match_parent"
+-                        android:layout_height="match_parent"
++                    android:layout_width="match_parent"
++                    android:layout_height="match_parent"
++                    android:baselineAligned="false"
+                     android:orientation="horizontal"
+                     android:paddingTop="5dp"
+                     android:weightSum="10">
+ 
+                     <FrameLayout
+-                            android:layout_width="match_parent"
++                        android:layout_width="match_parent"
+                         android:layout_height="match_parent"
+                         android:layout_weight="6">
+ 
+@@ -72,6 +74,7 @@
+                             android:layout_width="match_parent"
+                             android:layout_height="wrap_content"
+                             android:layout_gravity="top"
++                            android:contentDescription="@string/movie_picture"
+                             android:paddingLeft="12dp"
+                             android:paddingRight="12dp"
+                             android:paddingTop="15dp"
+@@ -83,7 +86,7 @@
+                     <LinearLayout
+                         android:id="@+id/details_layout"
+                         android:layout_width="match_parent"
+-                            android:layout_height="wrap_content"
++                        android:layout_height="wrap_content"
+                         android:layout_weight="4"
+                         android:orientation="vertical"
+                         android:paddingBottom="24dp"
+@@ -122,7 +125,7 @@
+                 </LinearLayout>
+ 
+                 <LinearLayout
+-                        android:layout_width="wrap_content"
++                    android:layout_width="wrap_content"
+                     android:layout_height="match_parent"
+                     android:orientation="vertical">
+ 
+Index: .idea/dictionaries/smac.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/dictionaries/smac.xml	(revision )
++++ .idea/dictionaries/smac.xml	(revision )
+@@ -0,0 +1,17 @@
++<component name="ProjectDictionaryState">
++  <dictionary name="smac">
++    <words>
++      <w>achive</w>
++      <w>arrayreq</w>
++      <w>cien</w>
++      <w>cincunta</w>
++      <w>repla</w>
++      <w>resutls</w>
++      <w>smartphone</w>
++      <w>submision</w>
++      <w>themoviedb</w>
++      <w>webservices</w>
++      <w>xxxxxxx</w>
++    </words>
++  </dictionary>
++</component>
+\ No newline at end of file
+Index: app/src/main/java/com/sunnyface/popularmovies/libs/Constants.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/sunnyface/popularmovies/libs/Constants.java	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/java/com/sunnyface/popularmovies/libs/Constants.java	(revision )
+@@ -1,7 +1,8 @@
+ package com.sunnyface.popularmovies.libs;
+ 
+ /**
+- * Created by smac on 14/01/2017.
++ * Created by Kiko Seijo on 14/01/2017.
++ * by The Sunnyface.com.
+  */
+ 
+ public class Constants {
+Index: app/src/main/java/com/sunnyface/popularmovies/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/sunnyface/popularmovies/MainActivity.java	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/java/com/sunnyface/popularmovies/MainActivity.java	(revision )
+@@ -48,6 +48,8 @@
+         } else {
+             isTableLayout = false;
+             getSupportActionBar().setElevation(0f);
++
++
+         }
+     }
+ 
+Index: app/src/main/res/values/dimens.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/dimens.xml	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/res/values/dimens.xml	(revision )
+@@ -9,7 +9,7 @@
+     <dimen name="card_elevation">1dp</dimen>
+     <dimen name="card_corner_radius">0dp</dimen>
+     <dimen name="padding_tv_overview">15dp</dimen>
+-    <dimen name="empty_text_size">32dp</dimen>
++    <dimen name="empty_text_size">32sp</dimen>
+     <dimen name="cincunta_padding">50dp</dimen>
+     <dimen name="cien_padding">100dp</dimen>
+ 
+Index: app/src/main/java/com/sunnyface/popularmovies/DetailActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/sunnyface/popularmovies/DetailActivity.java	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/java/com/sunnyface/popularmovies/DetailActivity.java	(revision )
+@@ -8,7 +8,8 @@
+ 
+ 
+ /**
+- * Created by smac on 14/01/2017.
++ * Created by Kiko Seijo on 14/01/2017.
++ * by The Sunnyface.com.
+  */
+ 
+ public class DetailActivity extends AppCompatActivity {
+\ No newline at end of file
+Index: app/src/main/java/com/sunnyface/popularmovies/MainActivityFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/sunnyface/popularmovies/MainActivityFragment.java	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/java/com/sunnyface/popularmovies/MainActivityFragment.java	(revision )
+@@ -37,19 +37,19 @@
+ import java.util.Collection;
+ 
+ /**
+- * Created by smac on 14/01/2017.
++ * Created by Kiko Seijo on 14/01/2017.
++ * by The Sunnyface.com.
+  */
+ 
+ public class MainActivityFragment extends Fragment implements EndlessRecyclerViewAdapter.RequestToLoadMoreListener {
+ 
+-    private Collection<Movie> moviesArray = new ArrayList<>();
++    private final Collection<Movie> moviesArray = new ArrayList<>();
+     private int page_num = 1;
+     private MovieAdapter movieAdapter;
+     private String sort_type;
+     private ProgressBar progressBar;
+     private EndlessRecyclerViewAdapter endlessRecyclerViewAdapter;
+     private LinearLayoutManager linearLayoutManager;
+-    private boolean isConnected;
+     private RecyclerView moviesRecyclerView;
+     private ImageView disconnected_icon;
+     private RequestQueue requestQueue;
+@@ -69,7 +69,7 @@
+         final View thisView = inflater.inflate(R.layout.fragment_main, container, false);
+ 
+         disconnected_icon = (ImageView) thisView.findViewById(R.id.no_connection);
+-        movieAdapter = new MovieAdapter(getActivity(), null);
++        movieAdapter = new MovieAdapter(getActivity());
+         endlessRecyclerViewAdapter = new EndlessRecyclerViewAdapter(getActivity(), movieAdapter, this);
+         empty_message = (TextView) thisView.findViewById(R.id.empty_text);
+ 
+@@ -87,7 +87,7 @@
+         progressBar = (ProgressBar) thisView.findViewById(R.id.progress_bar);
+         progressBar.setVisibility(View.VISIBLE);
+ 
+-        isConnected = Utils.isNetworkAvailable(getActivity());
++        boolean isConnected = Utils.isNetworkAvailable(getActivity());
+         sort_type = getResources().getString(R.string.sort_popularity);
+ 
+         if (!isConnected) {
+@@ -99,13 +99,7 @@
+         return thisView;
+     }
+ 
+-    // MARK: Action MENU
+     @Override
+-    public void onPrepareOptionsMenu(Menu menu) {
+-        super.onPrepareOptionsMenu(menu);
+-    }
+-
+-    @Override
+     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+         inflater.inflate(R.menu.menu_main, menu);
+         MenuItem action_popularity = menu.findItem(R.id.action_sort_popularity);
+@@ -211,12 +205,10 @@
+                                 movies.add(movie);
+                             }
+ 
+-                            if (movies != null) {
+-                                moviesArray.addAll(movies);
+-                                movieAdapter.addMovies(movies);
+-                                endlessRecyclerViewAdapter.onDataReady(true);
++                            moviesArray.addAll(movies);
++                            movieAdapter.addMovies(movies);
++                            endlessRecyclerViewAdapter.onDataReady(true);
+-                                setOnClickListenerOnItems(moviesArray);
+-                            }
++                            setOnClickListenerOnItems();
+                             progressBar.setVisibility(View.GONE);
+                             movieAdapter.notifyDataSetChanged();
+ 
+@@ -264,7 +256,7 @@
+         }
+     }
+ 
+-    private void setOnClickListenerOnItems(final Collection<Movie> movies) {
++    private void setOnClickListenerOnItems() {
+         MovieAdapter.OnItemClickListener onItemClickListener = new MovieAdapter.OnItemClickListener() {
+             @Override
+             public void onItemClick(View v, int position) {
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ .idea/misc.xml	(revision )
+@@ -135,7 +135,7 @@
+     <ConfirmationsSetting value="0" id="Add" />
+     <ConfirmationsSetting value="0" id="Remove" />
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+\ No newline at end of file
+Index: app/src/main/java/com/sunnyface/popularmovies/models/Movie.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/sunnyface/popularmovies/models/Movie.java	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/java/com/sunnyface/popularmovies/models/Movie.java	(revision )
+@@ -11,7 +11,8 @@
+ import org.json.JSONObject;
+ 
+ /**
+- * Created by smac on 14/01/2017.
++ * Created by Kiko Seijo on 14/01/2017.
++ * by The Sunnyface.com.
+  */
+ 
+ public class Movie implements Parcelable {
+@@ -27,7 +28,6 @@
+     };
+ 
+ 
+-
+     private long id;
+     private String title;
+     private String overview;
+@@ -37,7 +37,7 @@
+     private double vote_average;
+     private long vote_count;
+ 
+-    public Movie(long id, String title, String overview, String release_date, String poster_path, String backdrop_path, double vote_average, long vote_count) {
++    private Movie(long id, String title, String overview, String release_date, String poster_path, String backdrop_path, double vote_average, long vote_count) {
+         this.setId(id);
+         this.setTitle(title);
+         this.setOverview(overview);
+@@ -70,8 +70,7 @@
+         String backdrop_path = movieJsonObject.getString(Constants.MOVIE_KEY_BACKDROP_PATH);
+         long vote_count = movieJsonObject.getLong(Constants.MOVIE_KEY_VOTE_COUNT);
+ 
+-        Movie movie = new Movie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, vote_count);
+-        return movie;
++        return new Movie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, vote_count);
+     }
+ 
+     @Override
+@@ -91,11 +90,7 @@
+         dest.writeLong(this.vote_count);
+     }
+ 
+-    public long getId() {
+-        return id;
+-    }
+-
+-    public void setId(long id) {
++    private void setId(long id) {
+         this.id = id;
+     }
+ 
+@@ -103,7 +98,7 @@
+         return title;
+     }
+ 
+-    public void setTitle(String title) {
++    private void setTitle(String title) {
+         this.title = title;
+     }
+ 
+@@ -111,7 +106,7 @@
+         return overview;
+     }
+ 
+-    public void setOverview(String overview) {
++    private void setOverview(String overview) {
+         this.overview = overview;
+     }
+ 
+@@ -119,23 +114,23 @@
+         return release_date;
+     }
+ 
+-    public void setRelease_date(String release_date) {
++    private void setRelease_date(String release_date) {
+         this.release_date = release_date;
+     }
+ 
+-    public String getPoster_path() {
++    private String getPoster_path() {
+         return poster_path;
+     }
+ 
+-    public void setPoster_path(String poster_path) {
++    private void setPoster_path(String poster_path) {
+         this.poster_path = poster_path;
+     }
+ 
+-    public String getBackdrop_path() {
++    private String getBackdrop_path() {
+         return backdrop_path;
+     }
+ 
+-    public void setBackdrop_path(String backdrop_path) {
++    private void setBackdrop_path(String backdrop_path) {
+         this.backdrop_path = backdrop_path;
+     }
+ 
+@@ -143,15 +138,11 @@
+         return vote_average;
+     }
+ 
+-    public void setVote_average(double vote_average) {
++    private void setVote_average(double vote_average) {
+         this.vote_average = vote_average;
+     }
+ 
+-    public long getVote_count() {
+-        return vote_count;
+-    }
+-
+-    public void setVote_count(long vote_count) {
++    private void setVote_count(long vote_count) {
+         this.vote_count = vote_count;
+     }
+ 
+Index: app/src/main/java/com/sunnyface/popularmovies/libs/Utils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/sunnyface/popularmovies/libs/Utils.java	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/java/com/sunnyface/popularmovies/libs/Utils.java	(revision )
+@@ -1,7 +1,8 @@
+ package com.sunnyface.popularmovies.libs;
+ 
+ /**
+- * Created by smac on 14/01/2017.
++ * Created by Kiko Seijo on 14/01/2017.
++ * by The Sunnyface.com.
+  */
+ 
+ import android.content.Context;
+@@ -35,9 +36,7 @@
+                 .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_KEY)
+                 .appendQueryParameter("page", Integer.toString(page_num));
+ 
+-        String imgUrl = builder.build().toString();
+-
+-        return imgUrl;
++        return builder.build().toString();
+     }
+ 
+     public static void imageViewObserver(final ImageView imageView, final Context context, final String type, final Movie movie) {
+Index: gradlew.bat
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- gradlew.bat	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ gradlew.bat	(revision )
+@@ -1,0 +1,0 @@
+Index: app/src/main/java/com/sunnyface/popularmovies/libs/MovieAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/sunnyface/popularmovies/libs/MovieAdapter.java	(revision be0b4ba8ebf349e93bc51acd573fa19c8b0b4203)
++++ app/src/main/java/com/sunnyface/popularmovies/libs/MovieAdapter.java	(revision )
+@@ -17,21 +17,22 @@
+ import java.util.Collection;
+ 
+ /**
+- * Created by smac on 14/01/2017.
++ * Created by Kiko Seijo on 14/01/2017.
++ * by The Sunnyface.com.
+  */
+ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
+-    OnItemClickListener mItemClickListener;
++    private final Context context;
++    private OnItemClickListener mItemClickListener;
+     private Collection<Movie> movies;
+-    private Context context;
+ 
+-    public MovieAdapter(Context context, Collection<Movie> movies) {
++    public MovieAdapter(Context context) {
+         this.context = context;
+-        this.movies = movies;
++        this.movies = null;
+     }
+ 
+     @Override
+     public MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.movie_row, null);
++        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.movie_row, viewGroup);
+         return new MovieViewHolder(view);
+     }
+ 
+@@ -39,7 +40,7 @@
+     public void onBindViewHolder(final MovieViewHolder movieViewHolder, int i) {
+         final Movie movie = (Movie) movies.toArray()[i];
+ 
+-        int viewWidth = movieViewHolder.imageView.getWidth();
++        //int viewWidth = movieViewHolder.imageView.getWidth();
+         String imgUrl = movie.getImageUrl(342, "cover").toString();
+         //Download image using picasso library
+         Picasso.with(context)
+@@ -86,11 +87,11 @@
+     }
+ 
+     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
++        final LinearLayout movieHolder;
++        final LinearLayout movieTitleHolder;
++        final ImageView imageView;
++        final TextView titleView;
+         private final LinearLayout movieLayout;
+-        protected LinearLayout movieHolder;
+-        protected LinearLayout movieTitleHolder;
+-        protected ImageView imageView;
+-        protected TextView titleView;
+ 
+         public MovieViewHolder(View view) {
+             super(view);
