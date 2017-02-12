@@ -3,12 +3,12 @@ package com.sunnyface.popularmovies;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,9 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -28,8 +25,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.sunnyface.popularmovies.data.EndlessRecyclerOnScrollListener;
-import com.sunnyface.popularmovies.data.MovieAdapter;
+import com.sunnyface.popularmovies.adapters.MovieAdapter;
 import com.sunnyface.popularmovies.data.MovieContract;
+import com.sunnyface.popularmovies.databinding.FragmentMainBinding;
 import com.sunnyface.popularmovies.libs.Utils;
 import com.sunnyface.popularmovies.models.Movie;
 
@@ -54,18 +52,16 @@ public class MainActivityFragment extends Fragment {
     private int page_num = 1;
     private MovieAdapter movieAdapter;
     private String sort_type;
-    private ProgressBar progressBar;
     private LinearLayoutManager linearLayoutManager;
-    private RecyclerView recyclerView;
-    private ImageView disconnected_icon;
+
     private RequestQueue requestQueue;
-    private TextView emptyView;
+    private FragmentMainBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.i(TAG, "onCreate: ");
+        //Log.i(TAG, "onCreate: ");
         requestQueue = Volley.newRequestQueue(getActivity());
 
     }
@@ -73,16 +69,11 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        Log.i(TAG, "onCreateView: ");
-        final View thisView = inflater.inflate(R.layout.fragment_main, container, false);
+        //Log.i(TAG, "onCreateView: ");
 
-        disconnected_icon = (ImageView) thisView.findViewById(R.id.no_connection);
-        emptyView = (TextView) thisView.findViewById(R.id.empty_view);
-        recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
-        progressBar = (ProgressBar) thisView.findViewById(R.id.progress_bar);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
 
-
-        progressBar.setVisibility(View.VISIBLE);
+        binding.progressBar.setVisibility(View.VISIBLE);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SORT_SETTING_KEY)) {
@@ -98,7 +89,7 @@ public class MainActivityFragment extends Fragment {
 
             }
         } else {
-            Log.i(TAG, "onCreateView: LL");
+            //Log.i(TAG, "onCreateView: LL");
             sort_type = getString(R.string.sort_popularity);
         }
 
@@ -120,17 +111,17 @@ public class MainActivityFragment extends Fragment {
         linearLayoutManager = new GridLayoutManager(getActivity(), spanCount);
 
 
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
+        binding.recyclerView.setLayoutManager(linearLayoutManager);
+        binding.recyclerView.setHasFixedSize(true);
 
         movieAdapter = new MovieAdapter(getActivity());
-        recyclerView.setAdapter(movieAdapter);
+        binding.recyclerView.setAdapter(movieAdapter);
         setOnClickListenerOnItems();
 
-        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+        binding.recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int current_page) {
-                Log.i(TAG, "onLoadMore: current_page: " + current_page);
+                //Log.i(TAG, "onLoadMore: current_page: " + current_page);
                 loadMoreMovies();
             }
         });
@@ -139,22 +130,24 @@ public class MainActivityFragment extends Fragment {
         if (!isConnected) {
             Toast aToast = Toast.makeText(getActivity(), R.string.text_no_internet_msg, Toast.LENGTH_LONG);
             aToast.show();
-            progressBar.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.GONE);
+        } else {
+            reloadMovies();
         }
 
-        return thisView;
+        return binding.getRoot();
     }
 
     // MARK: Action MENU
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        Log.i(TAG, "onPrepareOptionsMenu: ");
+        //Log.i(TAG, "onPrepareOptionsMenu: ");
         super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.i(TAG, "onCreateOptionsMenu: ");
+        //Log.i(TAG, "onCreateOptionsMenu: ");
         inflater.inflate(R.menu.menu_main, menu);
 
         MenuItem action_popularity = menu.findItem(R.id.action_sort_popularity);
@@ -182,27 +175,29 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(TAG, "onOptionsItemSelected: ");
+        //Log.i(TAG, "onOptionsItemSelected: ");
         int id = item.getItemId();
         page_num = 1;
         switch (id) {
             case R.id.action_sort_popularity:
-                item.setChecked(!item.isChecked());
-                sort_type = getResources().getString(R.string.sort_popularity);
-                reloadMovies();
+                changeSortAction(item,getResources().getString(R.string.sort_popularity));
                 return true;
             case R.id.action_sort_rating:
-                item.setChecked(!item.isChecked());
-                sort_type = getResources().getString(R.string.sort_rating);
-                reloadMovies();
+                changeSortAction(item,getResources().getString(R.string.sort_rating));
                 return true;
             case R.id.action_favorite:
-                item.setChecked(!item.isChecked());
-                sort_type = getResources().getString(R.string.sort_favorites);
-                reloadMovies();
+                changeSortAction(item,getResources().getString(R.string.sort_favorites));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+    /// Change sort action on MenuItem action
+    private void changeSortAction(MenuItem item, String sortType){
+        if (!item.isChecked()){
+            item.setChecked(!item.isChecked());
+            sort_type = sortType;
+            reloadMovies();
         }
     }
 
@@ -213,7 +208,7 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.i(TAG, "onSaveInstanceState: ");
+        //Log.i(TAG, "onSaveInstanceState: ");
         outState.putString(SORT_SETTING_KEY, sort_type);
         Log.i(TAG, "onSaveInstanceState: sort_type:: " + sort_type);
         if (moviesArray != null) {
@@ -224,7 +219,7 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
-        Log.i(TAG, "onViewStateRestored: ");
+        //Log.i(TAG, "onViewStateRestored: ");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SORT_SETTING_KEY)) {
                 sort_type = savedInstanceState.getString(SORT_SETTING_KEY);
@@ -239,7 +234,7 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        Log.i(TAG, "onConfigurationChanged: ");
+        //Log.i(TAG, "onConfigurationChanged: ");
         super.onConfigurationChanged(newConfig);
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -250,7 +245,7 @@ public class MainActivityFragment extends Fragment {
 
 
     private void loadMoreMovies() {
-        Log.i(TAG, "loadMoreMovies: ");
+        //Log.i(TAG, "loadMoreMovies: ");
         page_num += 1;
         reloadMovies();
     }
@@ -258,7 +253,7 @@ public class MainActivityFragment extends Fragment {
     // MARK: Build request to webservices using volley framework.
 
     private void loadMovieRequest() {
-        Log.i(TAG, "loadMovieRequest: page_num->" + page_num);
+        //Log.i(TAG, "loadMovieRequest: page_num->" + page_num);
         String JsonURL = Utils.buildMoviesUrl(sort_type, page_num);
 
 
@@ -309,7 +304,7 @@ public class MainActivityFragment extends Fragment {
 
         FetchFavoriteMoviesTask(Context context) {
             mContext = context;
-            Log.i(TAG, "FetchFavoriteMoviesTask: ");
+            //Log.i(TAG, "FetchFavoriteMoviesTask: ");
         }
 
         private List<Movie> getFavoriteMoviesDataFromCursor(Cursor cursor) {
@@ -354,27 +349,27 @@ public class MainActivityFragment extends Fragment {
 
     private void displayResults() {
 
-        Log.i(TAG, "displayResults: ");
+        //Log.i(TAG, "displayResults: ");
         if (moviesArray == null || moviesArray.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.emptyView.setVisibility(View.VISIBLE);
             Toast toast = Toast.makeText(getActivity(), R.string.text_no_records_found, Toast.LENGTH_LONG);
             toast.show();
         } else {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
+            binding.recyclerView.setVisibility(View.VISIBLE);
+            binding.emptyView.setVisibility(View.GONE);
         }
-        progressBar.setVisibility(View.GONE);
+        binding.progressBar.setVisibility(View.GONE);
     }
 
     private void reloadMovies() {
 
-        Log.i(TAG, "reloadMovies: ");
+        //Log.i(TAG, "reloadMovies: ");
 
         if (Utils.isNetworkAvailable(getActivity())) {
-            progressBar.setVisibility(View.VISIBLE);
-            disconnected_icon.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.noConnection.setVisibility(View.GONE);
+            binding.recyclerView.setVisibility(View.VISIBLE);
             if (sort_type.equals(getResources().getString(R.string.sort_favorites))) {
                 new FetchFavoriteMoviesTask(getActivity()).execute();
             } else {
@@ -387,13 +382,13 @@ public class MainActivityFragment extends Fragment {
         } else {
             Toast toast = Toast.makeText(getActivity(), R.string.text_no_internet_msg, Toast.LENGTH_LONG);
             toast.show();
-            recyclerView.setVisibility(View.GONE);
-            disconnected_icon.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.noConnection.setVisibility(View.VISIBLE);
         }
     }
 
     private void setOnClickListenerOnItems() {
-        Log.i(TAG, "setOnClickListenerOnItems: ");
+        //Log.i(TAG, "setOnClickListenerOnItems: ");
         MovieAdapter.OnItemClickListener onItemClickListener = new MovieAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {

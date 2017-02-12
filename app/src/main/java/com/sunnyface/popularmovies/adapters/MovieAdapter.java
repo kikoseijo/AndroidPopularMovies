@@ -1,6 +1,9 @@
-package com.sunnyface.popularmovies.data;
+package com.sunnyface.popularmovies.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,9 +50,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
         int viewWidth = movieViewHolder.imageView.getWidth();
         String imgUrl = movie.getImageUrl(342, "cover").toString();
+        Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
         //Download image using picasso library
         Picasso.with(context)
                 .load(imgUrl)
+                .error(transparentDrawable)
                 .into(movieViewHolder.imageView,
                         PicassoPalette.with(imgUrl, movieViewHolder.imageView)
                                 .use(PicassoPalette.Profile.VIBRANT)

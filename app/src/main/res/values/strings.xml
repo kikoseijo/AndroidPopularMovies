@@ -24,5 +24,7 @@
     <string name="movie_cover">Movie Cover</string>
     <string name="no_internet_connection">No internet Connection</string>
     <string name="movie_poster">Movie Poster</string>
+    <string name="error_message">Ohhhh! no records found</string>
+    <string name="trailer_thumbnail_description">Trailer Thumbnail</string>
 
 </resources>

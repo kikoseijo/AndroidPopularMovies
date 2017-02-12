@@ -7,7 +7,7 @@
     <color name="detail_text">#727272</color>
     <color name="primary">#3F51B5</color>
     <color name="primary_dark">#303F9F</color>
-    <color name="accent">#E22F84</color>
+    <color name="accent">#e22f84</color>
     <color name="light_gray">#d3d3d3</color>
     <color name="photo_tint">#7f101010</color>
     <color name="transparent">#80000000</color>
