@@ -1,11 +1,9 @@
 package com.sunnyface.popularmovies.adapters;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +24,6 @@ import java.util.Collection;
 
 public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.TrailerViewHolder> {
 
-    private static final String TAG = TrailersAdapter.class.getSimpleName();
     private Collection<Trailer> trailers;
     private final TrailersAdapterOnClickHandler mClickHandler;
 
@@ -55,15 +52,6 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         this.notifyDataSetChanged();
     }
 
-    public void clear()
-    {
-        if (this.trailers != null) {
-            int size = this.trailers.size();
-            this.trailers.clear();
-            this.notifyItemRangeRemoved(0, size);
-        }
-    }
-
     @Override
     public TrailerViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
     {
@@ -83,10 +71,10 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
     class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView titleTV;
-        TextView sizeTV;
-        TextView tipoTV;
-        ImageView imgView;
+        final TextView titleTV;
+        final TextView sizeTV;
+        final TextView tipoTV;
+        final ImageView imgView;
 
         public TrailerViewHolder(View itemView) {
             super(itemView);

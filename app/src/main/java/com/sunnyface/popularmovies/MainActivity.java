@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sunnyface.popularmovies.databinding.ActivityDetailBinding;
 import com.sunnyface.popularmovies.databinding.ActivityMainBinding;
 import com.sunnyface.popularmovies.libs.Constants;
 import com.sunnyface.popularmovies.models.Movie;
@@ -28,30 +27,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
     private boolean isTableLayout;
     private FragmentManager fragmentManager;
-    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         Toolbar toolbar = binding.actionBar.toolbar;
         setSupportActionBar(toolbar);
 
         fragmentManager = getSupportFragmentManager();
+        isTableLayout = binding.movieDetailContainer != null;
 
-
-        if (binding.movieDetailContainer != null) {
-            isTableLayout = true;
-            if (savedInstanceState == null) {
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.add(R.id.movie_detail_container, new MovieDetailFragment(), Constants.MOVIE_DETAIL_FRAGMENT_TAG);
-                fragmentTransaction.commit();
-            }
-        } else {
-            isTableLayout = false;
-            getSupportActionBar().setElevation(0.5f);
-        }
     }
 
 
@@ -61,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             Bundle args = new Bundle();
             args.putBoolean("isTabletLayout", true);
             args.putParcelable("movie", movie);
-            MovieDetailFragment fragment = new MovieDetailFragment();
+            DetailFragment fragment = new DetailFragment();
             fragment.setArguments(args);
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.movie_detail_container, fragment, Constants.MOVIE_DETAIL_FRAGMENT_TAG);   //Replace its key.

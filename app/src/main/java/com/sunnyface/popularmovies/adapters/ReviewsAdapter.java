@@ -1,9 +1,6 @@
 package com.sunnyface.popularmovies.adapters;
 
-import android.content.Context;
-import android.nfc.Tag;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +18,6 @@ import java.util.Collection;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsViewHolder> {
 
-    private static final String TAG = ReviewsAdapter.class.getSimpleName();
     private Collection<Review> reviews;
     private final ReviewsAdapterOnClickHandler mClickHandler;
 
@@ -50,15 +46,6 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
         this.notifyDataSetChanged();
     }
 
-    public void clear()
-    {
-        if (this.reviews != null) {
-            int size = this.reviews.size();
-            this.reviews.clear();
-            this.notifyItemRangeRemoved(0, size);
-        }
-    }
-
     @Override
     public ReviewsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
     {
@@ -78,8 +65,8 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
 
     class ReviewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView authorTv;
-        TextView commentsTv;
+        final TextView authorTv;
+        final TextView commentsTv;
 
         public ReviewsViewHolder(View itemView) {
             super(itemView);

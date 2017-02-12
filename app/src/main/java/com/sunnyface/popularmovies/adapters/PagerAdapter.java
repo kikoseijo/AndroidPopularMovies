@@ -15,7 +15,7 @@ import com.sunnyface.popularmovies.TrailersDetailFragment;
  */
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
-    int mNumOfTabs;
+    private final int mNumOfTabs;
     private final Bundle fragmentBundle;
     private MovieDetailFragment detail_fragment;
     private TrailersDetailFragment trailers_fragment;

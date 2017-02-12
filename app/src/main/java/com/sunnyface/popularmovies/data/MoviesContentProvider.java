@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+@SuppressWarnings("ALL")
 public class MoviesContentProvider extends ContentProvider {
 
 
@@ -100,7 +101,7 @@ public class MoviesContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Error:: Unknown uri: " + uri);
         }
-        db.close();
+        //db.close();
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }

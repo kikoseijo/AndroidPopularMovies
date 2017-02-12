@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.sunnyface.popularmovies.data.MovieContract;
 import com.sunnyface.popularmovies.libs.Constants;
@@ -76,7 +75,6 @@ public class Movie implements Parcelable {
             this.backdrop_path = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH));
             this.vote_average = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE));
             this.vote_count = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_COUNT));
-            cursor.close();
         }
         catch (Exception e)
         {
@@ -200,13 +198,12 @@ public class Movie implements Parcelable {
         else
             widthPath = "w780";
 
-        Uri poster_uri = Uri.parse(Constants.IMAGES_BASE_URL)
+        //Log.i("Poster_uri",poster_uri.toString());
+        return Uri.parse(Constants.IMAGES_BASE_URL)
                 .buildUpon()
                 .appendPath(widthPath)
                 .appendEncodedPath(image_path)
                 .build();
-        //Log.i("Poster_uri",poster_uri.toString());
-        return poster_uri;
     }
 }
 

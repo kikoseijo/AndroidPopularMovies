@@ -23,7 +23,6 @@ import com.sunnyface.popularmovies.databinding.TabTrailersBinding;
 import com.sunnyface.popularmovies.extensions.SimpleDividerItemDecoration;
 import com.sunnyface.popularmovies.libs.Utils;
 import com.sunnyface.popularmovies.models.Movie;
-import com.sunnyface.popularmovies.models.Review;
 import com.sunnyface.popularmovies.models.Trailer;
 
 import org.json.JSONArray;

@@ -51,7 +51,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     {
         final Movie movie = (Movie) movies.toArray()[i];
 
-        int viewWidth = movieViewHolder.imageView.getWidth();
         String imgUrl = movie.getImageUrl(342, "cover").toString();
         Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
         //Download image using picasso library
@@ -130,7 +129,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         @Override
         public void onClick(View v) {
             if (mItemClickListener != null) {
-                mItemClickListener.onItemClick(itemView, getPosition());
+                mItemClickListener.onItemClick(itemView, getAdapterPosition());
             }
         }
     }

@@ -10,35 +10,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 import com.sunnyface.popularmovies.BuildConfig;
-import com.sunnyface.popularmovies.R;
 import com.sunnyface.popularmovies.data.MovieContract;
 import com.sunnyface.popularmovies.data.MovieDbHelper;
 import com.sunnyface.popularmovies.extensions.GradientTransformation;
 import com.sunnyface.popularmovies.models.Movie;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-
 public class Utils {
 
     public static Boolean isMovieOnDatabase(Context context, int id) {
         MovieDbHelper dbHelper = new MovieDbHelper(context);
-        SQLiteDatabase mDb = dbHelper.getWritableDatabase();
+        SQLiteDatabase mDb = dbHelper.getReadableDatabase();
         Cursor cursor = mDb.query(
                 MovieContract.MovieEntry.TABLE_NAME,
                 null,

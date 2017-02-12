@@ -27,17 +27,12 @@ Setup your API key from tmdb.com account in order to be able to retrieve movies 
   - Gradient background to the CollapsingToolbarLayout using ***Transformation*** to enhance title visibility.
   - Added a ToggleButton to the CollapsingToolbarLayout for the favorites.
 
-### TODO:  
+### Reviewer attention:  
 
   - Need some help with the findViewById from the RecyclerView adapters.
-  - Save Instance States in the detail view fragments.
-  - movies.db' was leaked!  Please fix your application to end transactions in progress properly and to close the database when it is no longer needed.
+  - Save Instance States in the detail view fragments. But seems to work ok.
   - Maximize performance on detail view, maybe loading the Reviews and Trailers on DetailActivity and passing the results form API direct to fragments instead of loading them from fragment itself.
-  - Implement Picasso .error.
-  - Optimize Tablet Views.
   - Entering movie details from favorites if I remove it, when i navigate back, the movie remains till view its reloaded. (Need to commit changes before going back, or do a flag to reload when i´m back after deletion.).
-
-
 
 
 ### Specifications
@@ -46,24 +41,35 @@ This project has been build from scratch after looking several projects and pick
 
 Smartphone ***Portrait layout***   
 
-![](imgs/p_1.png?raw=true)
-![](imgs/p_2.png?raw=true)
-![](imgs/p_3.png?raw=true)  
+![](imgs/Stage2/phone_p_1.png?raw=true)
+![](imgs/Stage2/phone_p_2.png?raw=true)
+![](imgs/Stage2/phone_p_3.png?raw=true)
+![](imgs/Stage2/phone_p_4.png?raw=true)
+
 
 
 SmartPhone ***Landscape layout***
 
 
-![](imgs/l_1.png?raw=true)  
-![](imgs/p_4.png?raw=true)  
+![](imgs/Stage2/phone_l_1.jpeg?raw=true)
+![](imgs/Stage2/phone_l_2.jpeg?raw=true)
+
+![](imgs/Stage2/phone_l_3.jpeg?raw=true)
+![](imgs/Stage2/phone_l_4.jpeg?raw=true)
 
 Tablet ***Landscape layout***
 
-![](imgs/l_2.png?raw=true)
+![](imgs/Stage2/tablet_l_1.jpeg?raw=true)
+![](imgs/Stage2/tablet_l_2.jpeg?raw=true)
+
+![](imgs/Stage2/tablet_l_3.jpeg?raw=true)
 
 Tablet ***Portrait layout***
 
-![](imgs/l_3.png?raw=true)
+![](imgs/Stage2/tablet_p_1.jpeg?raw=true)
+![](imgs/Stage2/tablet_p_2.jpeg?raw=true)
+![](imgs/Stage2/tablet_p_3.jpeg?raw=true)
+
 
 
 
@@ -88,10 +94,6 @@ All the frameworks used are being loaded using ```mavenCentral()```.
 * Endless scroll loading new movies using a ***scrollObserver*** to call more pages.
 * SQLiteDatabase to store the users Favorites movies database.
 * Implements a ***ContentProvider*** to queries the Favorites Movies database.
-
-#### API KEY
-
-Its being hidden using declarations on the gradle build settings.  
 
 
 #

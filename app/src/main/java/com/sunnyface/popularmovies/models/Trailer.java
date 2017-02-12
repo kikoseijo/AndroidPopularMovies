@@ -10,7 +10,6 @@ import org.json.JSONObject;
 
 public class Trailer {
 
-    private String id;
     private String key;
     private String name;
     private String site;
@@ -18,21 +17,12 @@ public class Trailer {
     private String type;
 
     public Trailer(JSONObject trailer) throws JSONException {
-        this.id = trailer.getString("id");
+        String id = trailer.getString("id");
         this.key = trailer.getString("key");
         this.name = trailer.getString("name");
         this.site = trailer.getString("site");
         this.size = trailer.getString("size");
         this.type = trailer.getString("type");
-    }
-
-    public Trailer(String name, String key) {
-        this.name = name;
-        this.key = key;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getKey() {

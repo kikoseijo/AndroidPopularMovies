@@ -17,6 +17,8 @@ import com.sunnyface.popularmovies.databinding.FragmentDetailBinding;
 import com.sunnyface.popularmovies.libs.Utils;
 import com.sunnyface.popularmovies.models.Movie;
 
+import java.util.Locale;
+
 /**
  * Created by Kiko Seijo on 14/01/2017.
  * by The Sunnyface.com.
@@ -24,13 +26,11 @@ import com.sunnyface.popularmovies.models.Movie;
 
 public class MovieDetailFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    public static final String TAG = MovieDetailFragment.class.getSimpleName();
     private Movie movie;
     private boolean isTabletLayout;
     private boolean isFavorite;
     private Toast mToast;
     private FragmentDetailBinding binding;
-    private Typeface customTitleFont;
 
     public MovieDetailFragment() {
         setHasOptionsMenu(true);
@@ -48,7 +48,7 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
             }
         });
 
-        customTitleFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Bold.ttf");
+        Typeface customTitleFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Bold.ttf");
 
         if (arguments != null) {
             if (arguments.getBoolean("isTabletLayout")) {
@@ -58,6 +58,7 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
                 movie = getActivity().getIntent().getExtras().getParcelable("movie");
 
                 if (binding.movieTitle != null) {
+                    assert movie != null;
                     binding.movieTitle.setText(movie.getTitle());
                     binding.movieTitle.setContentDescription(movie.getTitle());
                     binding.movieTitle.setTypeface(customTitleFont);
@@ -65,7 +66,7 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
 
             }
             assert movie != null;
-            setMovieData(movie, binding.getRoot());
+            setMovieData(movie);
         }
 
         return binding.getRoot();
@@ -122,7 +123,7 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
     }
 
 
-    private void setMovieData(final Movie movie, final View view) {
+    private void setMovieData(final Movie movie) {
 
         isFavorite = Utils.isMovieOnDatabase(getActivity(), (int) movie.getId());
         setFavouriteButton();
@@ -138,7 +139,7 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
 
         // Rating View
 
-        binding.detailRating.setText(String.format("%.1f", movie.getVote_average()) + "/10");
+        binding.detailRating.setText(String.format(Locale.ENGLISH,"%.1f", movie.getVote_average()) + "/10");
         binding.detailRating.setContentDescription("Rating " + movie.getVote_average() + "/ 10");
 
         // Details view

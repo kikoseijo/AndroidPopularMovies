@@ -27,7 +27,7 @@ import com.android.volley.toolbox.Volley;
 import com.sunnyface.popularmovies.data.EndlessRecyclerOnScrollListener;
 import com.sunnyface.popularmovies.adapters.MoviesAdapter;
 import com.sunnyface.popularmovies.data.MovieContract;
-import com.sunnyface.popularmovies.databinding.FragmentMainBinding;
+import com.sunnyface.popularmovies.databinding.FragmentMainActivityBinding;
 import com.sunnyface.popularmovies.libs.Utils;
 import com.sunnyface.popularmovies.models.Movie;
 
@@ -55,7 +55,7 @@ public class MainActivityFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
 
     private RequestQueue requestQueue;
-    private FragmentMainBinding binding;
+    private FragmentMainActivityBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class MainActivityFragment extends Fragment {
 
         Log.i(TAG, "onCreateView: ");
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_activity, container, false);
 
         binding.progressBar.setVisibility(View.VISIBLE);
 
@@ -288,7 +288,6 @@ public class MainActivityFragment extends Fragment {
 
         FetchFavoriteMoviesTask(Context context) {
             mContext = context;
-            //Log.i(TAG, "FetchFavoriteMoviesTask: ");
         }
 
         private List<Movie> getFavoriteMoviesDataFromCursor(Cursor cursor) {
@@ -298,8 +297,9 @@ public class MainActivityFragment extends Fragment {
                     Movie movie = new Movie(cursor);
                     results.add(movie);
                 } while (cursor.moveToNext());
-                cursor.close();
             }
+            assert cursor != null;
+            cursor.close();
             return results;
         }
 
@@ -325,6 +325,7 @@ public class MainActivityFragment extends Fragment {
                 }
                 moviesArray = new ArrayList<>();
                 moviesArray.addAll(movies);
+                //mCursor.close();
                 displayResults();
             }
         }

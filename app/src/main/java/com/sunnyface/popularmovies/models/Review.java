@@ -10,29 +10,15 @@ import org.json.JSONObject;
 
 public class Review {
 
-    private String id;
     private String author;
     private String content;
     private String url;
 
-    public Review() {
-
-    }
-
     public Review(JSONObject review) throws JSONException {
-        this.id = review.getString("id");
+        String id = review.getString("id");
         this.author = review.getString("author");
         this.content = review.getString("content");
         this.url = review.getString("url");
-    }
-
-    public Review(String author, String content) {
-        this.author = author;
-        this.content = content;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getAuthor() {
