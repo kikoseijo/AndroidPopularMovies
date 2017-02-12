@@ -3,12 +3,12 @@ package com.sunnyface.popularmovies;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,9 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -28,8 +25,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.sunnyface.popularmovies.data.EndlessRecyclerOnScrollListener;
-import com.sunnyface.popularmovies.data.MovieAdapter;
+import com.sunnyface.popularmovies.adapters.MoviesAdapter;
 import com.sunnyface.popularmovies.data.MovieContract;
+import com.sunnyface.popularmovies.databinding.FragmentMainActivityBinding;
 import com.sunnyface.popularmovies.libs.Utils;
 import com.sunnyface.popularmovies.models.Movie;
 
@@ -52,14 +50,12 @@ public class MainActivityFragment extends Fragment {
     private static final String SORT_SETTING_KEY = "sort_setting";
     private static final String MOVIES_KEY = "movies";
     private int page_num = 1;
-    private MovieAdapter movieAdapter;
+    private MoviesAdapter movieAdapter;
     private String sort_type;
-    private ProgressBar progressBar;
     private LinearLayoutManager linearLayoutManager;
-    private RecyclerView recyclerView;
-    private ImageView disconnected_icon;
+
     private RequestQueue requestQueue;
-    private TextView emptyView;
+    private FragmentMainActivityBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,15 +70,10 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         Log.i(TAG, "onCreateView: ");
-        final View thisView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        disconnected_icon = (ImageView) thisView.findViewById(R.id.no_connection);
-        emptyView = (TextView) thisView.findViewById(R.id.empty_view);
-        recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
-        progressBar = (ProgressBar) thisView.findViewById(R.id.progress_bar);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_activity, container, false);
 
-
-        progressBar.setVisibility(View.VISIBLE);
+        binding.progressBar.setVisibility(View.VISIBLE);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SORT_SETTING_KEY)) {
@@ -98,36 +89,20 @@ public class MainActivityFragment extends Fragment {
 
             }
         } else {
-            Log.i(TAG, "onCreateView: LL");
+            //Log.i(TAG, "onCreateView: LL");
             sort_type = getString(R.string.sort_popularity);
         }
 
-        /**
-         * Number of columns depending on screen width.
-         * TODO: Show 3 columns on mobile landscape.
-         * */
+        linearLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.movies_per_row));
 
-//        Configuration config = thisView.getResources().getConfiguration();
-//        if (config.smallestScreenWidthDp >= 600 && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)) {
-//            linearLayoutManager = new GridLayoutManager(getActivity(), 1);
-//        } else if (config.smallestScreenWidthDp < 600 && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
-//            linearLayoutManager = new GridLayoutManager(getActivity(), 3);
-//        } else {
-//            linearLayoutManager = new GridLayoutManager(getActivity(), 2);
-//        }
-        /** Number of columns depending on screen width. */
-        Integer spanCount = getResources().getInteger(R.integer.movies_per_row);
-        linearLayoutManager = new GridLayoutManager(getActivity(), spanCount);
+        binding.recyclerView.setLayoutManager(linearLayoutManager);
+        binding.recyclerView.setHasFixedSize(true);
 
-
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
-
-        movieAdapter = new MovieAdapter(getActivity());
-        recyclerView.setAdapter(movieAdapter);
+        movieAdapter = new MoviesAdapter(getActivity());
+        binding.recyclerView.setAdapter(movieAdapter);
         setOnClickListenerOnItems();
 
-        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+        binding.recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int current_page) {
                 Log.i(TAG, "onLoadMore: current_page: " + current_page);
@@ -139,10 +114,12 @@ public class MainActivityFragment extends Fragment {
         if (!isConnected) {
             Toast aToast = Toast.makeText(getActivity(), R.string.text_no_internet_msg, Toast.LENGTH_LONG);
             aToast.show();
-            progressBar.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.GONE);
+        } else {
+            reloadMovies();
         }
 
-        return thisView;
+        return binding.getRoot();
     }
 
     // MARK: Action MENU
@@ -187,22 +164,24 @@ public class MainActivityFragment extends Fragment {
         page_num = 1;
         switch (id) {
             case R.id.action_sort_popularity:
-                item.setChecked(!item.isChecked());
-                sort_type = getResources().getString(R.string.sort_popularity);
-                reloadMovies();
+                changeSortAction(item,getResources().getString(R.string.sort_popularity));
                 return true;
             case R.id.action_sort_rating:
-                item.setChecked(!item.isChecked());
-                sort_type = getResources().getString(R.string.sort_rating);
-                reloadMovies();
+                changeSortAction(item,getResources().getString(R.string.sort_rating));
                 return true;
             case R.id.action_favorite:
-                item.setChecked(!item.isChecked());
-                sort_type = getResources().getString(R.string.sort_favorites);
-                reloadMovies();
+                changeSortAction(item,getResources().getString(R.string.sort_favorites));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+    /// Change sort action on MenuItem action
+    private void changeSortAction(MenuItem item, String sortType){
+        if (!item.isChecked()){
+            item.setChecked(!item.isChecked());
+            sort_type = sortType;
+            reloadMovies();
         }
     }
 
@@ -309,7 +288,6 @@ public class MainActivityFragment extends Fragment {
 
         FetchFavoriteMoviesTask(Context context) {
             mContext = context;
-            Log.i(TAG, "FetchFavoriteMoviesTask: ");
         }
 
         private List<Movie> getFavoriteMoviesDataFromCursor(Cursor cursor) {
@@ -319,8 +297,9 @@ public class MainActivityFragment extends Fragment {
                     Movie movie = new Movie(cursor);
                     results.add(movie);
                 } while (cursor.moveToNext());
-                cursor.close();
             }
+            assert cursor != null;
+            cursor.close();
             return results;
         }
 
@@ -346,6 +325,7 @@ public class MainActivityFragment extends Fragment {
                 }
                 moviesArray = new ArrayList<>();
                 moviesArray.addAll(movies);
+                //mCursor.close();
                 displayResults();
             }
         }
@@ -354,17 +334,17 @@ public class MainActivityFragment extends Fragment {
 
     private void displayResults() {
 
-        Log.i(TAG, "displayResults: ");
+        //Log.i(TAG, "displayResults: ");
         if (moviesArray == null || moviesArray.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.emptyView.setVisibility(View.VISIBLE);
             Toast toast = Toast.makeText(getActivity(), R.string.text_no_records_found, Toast.LENGTH_LONG);
             toast.show();
         } else {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
+            binding.recyclerView.setVisibility(View.VISIBLE);
+            binding.emptyView.setVisibility(View.GONE);
         }
-        progressBar.setVisibility(View.GONE);
+        binding.progressBar.setVisibility(View.GONE);
     }
 
     private void reloadMovies() {
@@ -372,9 +352,9 @@ public class MainActivityFragment extends Fragment {
         Log.i(TAG, "reloadMovies: ");
 
         if (Utils.isNetworkAvailable(getActivity())) {
-            progressBar.setVisibility(View.VISIBLE);
-            disconnected_icon.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.noConnection.setVisibility(View.GONE);
+            binding.recyclerView.setVisibility(View.VISIBLE);
             if (sort_type.equals(getResources().getString(R.string.sort_favorites))) {
                 new FetchFavoriteMoviesTask(getActivity()).execute();
             } else {
@@ -387,14 +367,14 @@ public class MainActivityFragment extends Fragment {
         } else {
             Toast toast = Toast.makeText(getActivity(), R.string.text_no_internet_msg, Toast.LENGTH_LONG);
             toast.show();
-            recyclerView.setVisibility(View.GONE);
-            disconnected_icon.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.noConnection.setVisibility(View.VISIBLE);
         }
     }
 
     private void setOnClickListenerOnItems() {
         Log.i(TAG, "setOnClickListenerOnItems: ");
-        MovieAdapter.OnItemClickListener onItemClickListener = new MovieAdapter.OnItemClickListener() {
+        MoviesAdapter.OnItemClickListener onItemClickListener = new MoviesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 if (position < movieAdapter.getItemCount()) {
