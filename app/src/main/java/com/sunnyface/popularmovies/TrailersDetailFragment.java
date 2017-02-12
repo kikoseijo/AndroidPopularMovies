@@ -137,8 +137,7 @@ public class TrailersDetailFragment extends Fragment implements TrailersAdapter.
         if (trailersArray == null || trailersArray.isEmpty()) {
             binding.rvTrailers.setVisibility(View.GONE);
             binding.tvErrorMessageDisplay.setVisibility(View.VISIBLE);
-            Toast toast = Toast.makeText(getActivity(), R.string.text_no_records_found, Toast.LENGTH_LONG);
-            toast.show();
+            //Toast.makeText(getActivity(), R.string.text_no_records_found, Toast.LENGTH_LONG).show();
         } else {
             binding.rvTrailers.setVisibility(View.VISIBLE);
             binding.tvErrorMessageDisplay.setVisibility(View.GONE);

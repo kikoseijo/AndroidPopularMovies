@@ -1,26 +1,17 @@
 package com.sunnyface.popularmovies;
 
-import android.content.ContentValues;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.github.florent37.picassopalette.PicassoPalette;
-import com.squareup.picasso.Picasso;
 import com.sunnyface.popularmovies.data.MovieContract;
 import com.sunnyface.popularmovies.databinding.FragmentDetailBinding;
 import com.sunnyface.popularmovies.libs.Utils;
@@ -39,6 +30,7 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
     private boolean isFavorite;
     private Toast mToast;
     private FragmentDetailBinding binding;
+    private Typeface customTitleFont;
 
     public MovieDetailFragment() {
         setHasOptionsMenu(true);
@@ -56,6 +48,8 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
             }
         });
 
+        customTitleFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Bold.ttf");
+
         if (arguments != null) {
             if (arguments.getBoolean("isTabletLayout")) {
                 isTabletLayout = true;
@@ -66,6 +60,7 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
                 if (binding.movieTitle != null) {
                     binding.movieTitle.setText(movie.getTitle());
                     binding.movieTitle.setContentDescription(movie.getTitle());
+                    binding.movieTitle.setTypeface(customTitleFont);
                 }
 
             }
@@ -82,20 +77,21 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
 
     private void changeFavoriteStatus() {
         if (isFavorite) {
+            isFavorite = Utils.isMovieOnDatabase(getActivity(), (int) movie.getId());
             deleteMovieFromDatabase();
         } else {
             addMovieToDatabase();
         }
     }
 
-    private  void deleteMovieFromDatabase(){
+    private void deleteMovieFromDatabase() {
         Integer isDeleted =
                 getActivity().getContentResolver().delete(
                         MovieContract.MovieEntry.CONTENT_URI,
                         MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
                         new String[]{Integer.toString((int) movie.getId())});
 
-        if (isDeleted>0){
+        if (isDeleted > 0) {
             showToast(getString(R.string.removed_from_favorites));
             isFavorite = !isFavorite;
             setFavouriteButton();
@@ -104,27 +100,15 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
         }
     }
 
-    private void addMovieToDatabase(){
-        ContentValues values = new ContentValues();
-
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
-        values.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
-        values.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-        values.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster_path());
-        values.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdrop_path());
-        values.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVote_average());
-        values.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVote_count());
-        values.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getRelease_date());
-
-        Uri rUri = getActivity().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
-        Log.i(TAG, "rUri: " + rUri);
+    private void addMovieToDatabase() {
+        Utils.addMovieToDatabase(getActivity(), movie);
         showToast(getString(R.string.added_to_favorites));
         isFavorite = !isFavorite;
         setFavouriteButton();
 
     }
 
-    private void showToast(String msg){
+    private void showToast(String msg) {
         if (mToast != null) {
             mToast.cancel();
         }
@@ -139,8 +123,6 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
 
 
     private void setMovieData(final Movie movie, final View view) {
-
-
 
         isFavorite = Utils.isMovieOnDatabase(getActivity(), (int) movie.getId());
         setFavouriteButton();
@@ -160,12 +142,10 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
         binding.detailRating.setContentDescription("Rating " + movie.getVote_average() + "/ 10");
 
         // Details view
-        Log.i(TAG, "setMovieData: overview" + movie.getOverview());
         binding.detailOverview.setText(movie.getOverview());
         binding.detailOverview.setContentDescription(movie.getOverview());
 
-        Log.i(TAG, "setMovieData: kkkkkkkkkkkkk HEIGHT" + binding.detailOverview.getHeight());
-        Log.i(TAG, "setMovieData: kkkkkkkkkkkkk WIDTH" + binding.detailOverview.getWidth());
+        Utils.imageViewObserver(binding.moviePoster, getActivity(), "cover", movie);
 
         if (isTabletLayout) {
             // Tablet Title View
@@ -173,36 +153,7 @@ public class MovieDetailFragment extends Fragment implements AdapterView.OnItemC
             binding.movieTitle.setText(movie.getTitle());
             binding.movieTitle.setContentDescription(movie.getTitle());
 
-
-            ViewTreeObserver vto = binding.moviePoster.getViewTreeObserver();
-            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    int width = binding.moviePoster.getWidth();
-                    //Log.d("TEST", "Width = " + width + " Height = " + imageView.getHeight());
-                    String imgUrl = movie.getImageUrl(width, "cover").toString();
-                    Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
-                    Picasso.with(getActivity())
-                            .load(imgUrl)
-                            .error(transparentDrawable)
-                            .into(binding.moviePoster,
-                                    PicassoPalette.with(imgUrl, binding.moviePoster)
-                                            .use(PicassoPalette.Profile.VIBRANT)
-                                            .intoBackground(view, PicassoPalette.Swatch.RGB)
-                                            //.intoTextColor(binding.detailOverview, PicassoPalette.Swatch.TITLE_TEXT_COLOR)
-                                            .intoTextColor(binding.detailRelease, PicassoPalette.Swatch.TITLE_TEXT_COLOR)
-                                            .intoTextColor(binding.detailRating, PicassoPalette.Swatch.TITLE_TEXT_COLOR));
-
-                    ViewTreeObserver obs = binding.moviePoster.getViewTreeObserver();
-                    obs.removeOnGlobalLayoutListener(this);
-                }
-            });
-
-
-        } else {
-            Utils.imageViewObserver(binding.moviePoster, getActivity(), "cover", movie);
         }
-
 
     }
 

@@ -26,6 +26,7 @@ public class MoviesContentProvider extends ContentProvider {
     public MoviesContentProvider() {
     }
 
+
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mMovieDbHelper.getWritableDatabase();
@@ -37,6 +38,7 @@ public class MoviesContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Error:: Unknown uri: " + uri);
         }
+        db.close();
         if (movieDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
@@ -73,7 +75,7 @@ public class MoviesContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Error:: Unknown uri: " + uri);
         }
-
+        db.close();
         getContext().getContentResolver().notifyChange(uri, null);
         return res;
     }
@@ -87,9 +89,10 @@ public class MoviesContentProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor cursor;
+        final SQLiteDatabase db = mMovieDbHelper.getReadableDatabase();
         switch (sUriMatcher.match(uri)) {
             case MOVIE: {
-                cursor = mMovieDbHelper.getReadableDatabase().query(
+                cursor = db.query(
                         MovieContract.MovieEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
@@ -97,7 +100,7 @@ public class MoviesContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Error:: Unknown uri: " + uri);
         }
-
+        db.close();
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
@@ -115,10 +118,10 @@ public class MoviesContentProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Error:: Unknown uri: " + uri);
         }
 
+        db.close();
         if (res != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
-
         return res;
     }
 }

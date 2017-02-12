@@ -137,8 +137,8 @@ public class ReviewsDetailFragment extends Fragment implements ReviewsAdapter.Re
         if (reviewsArray == null || reviewsArray.isEmpty()) {
             binding.rvReviews.setVisibility(View.GONE);
             binding.tvErrorMessageDisplay.setVisibility(View.VISIBLE);
-            Toast toast = Toast.makeText(getActivity(), R.string.text_no_records_found, Toast.LENGTH_LONG);
-            toast.show();
+            //Toast toast = Toast.makeText(getActivity(), R.string.text_no_records_found, Toast.LENGTH_LONG);
+            //toast.show();
         } else {
             binding.rvReviews.setVisibility(View.VISIBLE);
             binding.tvErrorMessageDisplay.setVisibility(View.GONE);

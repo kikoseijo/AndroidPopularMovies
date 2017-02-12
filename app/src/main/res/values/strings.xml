@@ -14,7 +14,7 @@
     <string name="sort_favorites">favorites</string>
 
     <string name="text_favorite">Loved</string>
-    <string name="text_no_records_found">No favourite movies found!</string>
+    <string name="text_no_records_found">No records found!</string>
     <string name="no_data_available">No data available</string>
     <string name="add_to_favourite">Add to Favorites</string>
     <string name="remove_from_favorites">Remove from Favorites</string>

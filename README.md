@@ -16,13 +16,16 @@ Setup your API key from tmdb.com account in order to be able to retrieve movies 
 ##### (12/02/17) - Working on Stage2  
 
   - Infinite loading using ***EndlessRecyclerViewAdapter***.
-  - Added 2 new fragments (ReviewsDetailFragment + TrailersDetailFragment)
+  - Added 2 new fragments (ReviewsDetailFragment + TrailersDetailFragment).
   - Implements ***TabLayout*** + ***ViewPager*** with ***Swipe Gestures*** on detail view for movie reviews and movie trailers.
-  - TabLayout + ViewPager logic has been implement in DetailActivity
-  - Created a PagerAdapter that extends from ***FragmentStatePagerAdapter***
-  - Added 2 new models Review and Trailer, for easy data binding from the JSon Request
+  - TabLayout + ViewPager logic has been implement in DetailActivity.
+  - Created a PagerAdapter that extends from ***FragmentStatePagerAdapter***.
+  - Added 2 new models Review and Trailer, for easy data binding from the JSon Request.
   - Implemented a ContentProvider to save favorites movies into SQLiteDatabase.
   - Extended ***RecyclerView.ItemDecoration*** to draw a line between RecyclerViews in reviews and trailers.
+  - Added custom font using .TTF fonts.
+  - Gradient background to the CollapsingToolbarLayout using ***Transformation*** to enhance title visibility.
+  - Added a ToggleButton to the CollapsingToolbarLayout for the favorites.
 
 ### TODO:  
 
@@ -30,9 +33,9 @@ Setup your API key from tmdb.com account in order to be able to retrieve movies 
   - Save Instance States in the detail view fragments.
   - movies.db' was leaked!  Please fix your application to end transactions in progress properly and to close the database when it is no longer needed.
   - Maximize performance on detail view, maybe loading the Reviews and Trailers on DetailActivity and passing the results form API direct to fragments instead of loading them from fragment itself.
-  - Implement Picasso .error
+  - Implement Picasso .error.
   - Optimize Tablet Views.
-  - Entering movie details from favorites if I remove it, when i navigate back, the movie remains till view its reloaded. (Need to commit changes before going back, or do a flag to reload when i´m back after deletion.)
+  - Entering movie details from favorites if I remove it, when i navigate back, the movie remains till view its reloaded. (Need to commit changes before going back, or do a flag to reload when i´m back after deletion.).
 
 
 

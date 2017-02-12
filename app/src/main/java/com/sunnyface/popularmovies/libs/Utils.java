@@ -5,25 +5,34 @@ package com.sunnyface.popularmovies.libs;
  * by The Sunnyface.com.
  */
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.v7.graphics.Palette;
+import android.util.Log;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import com.sunnyface.popularmovies.BuildConfig;
 import com.sunnyface.popularmovies.R;
 import com.sunnyface.popularmovies.data.MovieContract;
 import com.sunnyface.popularmovies.data.MovieDbHelper;
+import com.sunnyface.popularmovies.extensions.GradientTransformation;
 import com.sunnyface.popularmovies.models.Movie;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class Utils {
 
@@ -39,6 +48,7 @@ public class Utils {
         );
         int numRows = cursor.getCount();
         cursor.close();
+        mDb.close();
         return numRows > 0 ;
     }
 
@@ -94,11 +104,21 @@ public class Utils {
                 int width = imageView.getWidth();
                 //Log.d("TEST", "Width = " + width + " Height = " + imageView.getHeight());
                 Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
-                Picasso
-                        .with(context)
-                        .load(movie.getImageUrl(width, type))
-                        .error(transparentDrawable)
-                        .into(imageView);
+                if (type.equals("back")){
+                    Picasso
+                            .with(context)
+                            .load(movie.getImageUrl(width, type))
+                            .transform(new GradientTransformation())
+                            .error(transparentDrawable)
+                            .into(imageView);
+                } else {
+                    Picasso
+                            .with(context)
+                            .load(movie.getImageUrl(width, type))
+                            .error(transparentDrawable)
+                            .into(imageView);
+                }
+
 
                 ViewTreeObserver obs = imageView.getViewTreeObserver();
                 obs.removeOnGlobalLayoutListener(this);
@@ -106,5 +126,22 @@ public class Utils {
         });
     }
 
+    public static void addMovieToDatabase(Context context, Movie movie){
+        ContentValues values = new ContentValues();
+
+        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
+        values.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
+        values.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+        values.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster_path());
+        values.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdrop_path());
+        values.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVote_average());
+        values.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVote_count());
+        values.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getRelease_date());
+
+        Uri rUri = context.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
+        Log.i("MovieDb Updated::->", "rUri: " + rUri);
+
+    }
 
 }
+

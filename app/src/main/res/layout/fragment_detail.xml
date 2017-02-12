@@ -76,6 +76,8 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:textAppearanceSmall"
                         android:textColor="@android:color/white"
+                        android:paddingStart="3dp"
+                        android:paddingLeft="3dp"
                         android:textStyle="bold"
                         tools:text="Rating" />
 

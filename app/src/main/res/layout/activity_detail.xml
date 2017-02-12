@@ -26,9 +26,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/movie_poster"
+                    android:src="@drawable/back_gradient"
                     android:scaleType="centerCrop"
                     app:layout_collapseMode="parallax"
                     app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
+
+                <ToggleButton
+                    android:id="@+id/favourite_button"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="bottom|end"
+                    app:layout_anchorGravity="bottom|end"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/fav_toggle"
+                    android:textOff=""
+                    android:textOn=""
+                    android:layout_marginEnd="8dp"/>
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/detail_action_bar"
@@ -36,7 +50,9 @@
                     android:layout_height="55dp"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:layout_collapseMode="pin"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Dark">
+
+                </android.support.v7.widget.Toolbar>
 
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>

@@ -25,7 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.sunnyface.popularmovies.data.EndlessRecyclerOnScrollListener;
-import com.sunnyface.popularmovies.adapters.MovieAdapter;
+import com.sunnyface.popularmovies.adapters.MoviesAdapter;
 import com.sunnyface.popularmovies.data.MovieContract;
 import com.sunnyface.popularmovies.databinding.FragmentMainBinding;
 import com.sunnyface.popularmovies.libs.Utils;
@@ -50,7 +50,7 @@ public class MainActivityFragment extends Fragment {
     private static final String SORT_SETTING_KEY = "sort_setting";
     private static final String MOVIES_KEY = "movies";
     private int page_num = 1;
-    private MovieAdapter movieAdapter;
+    private MoviesAdapter movieAdapter;
     private String sort_type;
     private LinearLayoutManager linearLayoutManager;
 
@@ -61,7 +61,7 @@ public class MainActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        //Log.i(TAG, "onCreate: ");
+        Log.i(TAG, "onCreate: ");
         requestQueue = Volley.newRequestQueue(getActivity());
 
     }
@@ -69,7 +69,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        //Log.i(TAG, "onCreateView: ");
+        Log.i(TAG, "onCreateView: ");
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
 
@@ -93,35 +93,19 @@ public class MainActivityFragment extends Fragment {
             sort_type = getString(R.string.sort_popularity);
         }
 
-        /**
-         * Number of columns depending on screen width.
-         * TODO: Show 3 columns on mobile landscape.
-         * */
-
-//        Configuration config = thisView.getResources().getConfiguration();
-//        if (config.smallestScreenWidthDp >= 600 && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)) {
-//            linearLayoutManager = new GridLayoutManager(getActivity(), 1);
-//        } else if (config.smallestScreenWidthDp < 600 && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
-//            linearLayoutManager = new GridLayoutManager(getActivity(), 3);
-//        } else {
-//            linearLayoutManager = new GridLayoutManager(getActivity(), 2);
-//        }
-        /** Number of columns depending on screen width. */
-        Integer spanCount = getResources().getInteger(R.integer.movies_per_row);
-        linearLayoutManager = new GridLayoutManager(getActivity(), spanCount);
-
+        linearLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.movies_per_row));
 
         binding.recyclerView.setLayoutManager(linearLayoutManager);
         binding.recyclerView.setHasFixedSize(true);
 
-        movieAdapter = new MovieAdapter(getActivity());
+        movieAdapter = new MoviesAdapter(getActivity());
         binding.recyclerView.setAdapter(movieAdapter);
         setOnClickListenerOnItems();
 
         binding.recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int current_page) {
-                //Log.i(TAG, "onLoadMore: current_page: " + current_page);
+                Log.i(TAG, "onLoadMore: current_page: " + current_page);
                 loadMoreMovies();
             }
         });
@@ -141,13 +125,13 @@ public class MainActivityFragment extends Fragment {
     // MARK: Action MENU
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        //Log.i(TAG, "onPrepareOptionsMenu: ");
+        Log.i(TAG, "onPrepareOptionsMenu: ");
         super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //Log.i(TAG, "onCreateOptionsMenu: ");
+        Log.i(TAG, "onCreateOptionsMenu: ");
         inflater.inflate(R.menu.menu_main, menu);
 
         MenuItem action_popularity = menu.findItem(R.id.action_sort_popularity);
@@ -175,7 +159,7 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //Log.i(TAG, "onOptionsItemSelected: ");
+        Log.i(TAG, "onOptionsItemSelected: ");
         int id = item.getItemId();
         page_num = 1;
         switch (id) {
@@ -208,7 +192,7 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        //Log.i(TAG, "onSaveInstanceState: ");
+        Log.i(TAG, "onSaveInstanceState: ");
         outState.putString(SORT_SETTING_KEY, sort_type);
         Log.i(TAG, "onSaveInstanceState: sort_type:: " + sort_type);
         if (moviesArray != null) {
@@ -219,7 +203,7 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
-        //Log.i(TAG, "onViewStateRestored: ");
+        Log.i(TAG, "onViewStateRestored: ");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SORT_SETTING_KEY)) {
                 sort_type = savedInstanceState.getString(SORT_SETTING_KEY);
@@ -234,7 +218,7 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        //Log.i(TAG, "onConfigurationChanged: ");
+        Log.i(TAG, "onConfigurationChanged: ");
         super.onConfigurationChanged(newConfig);
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -245,7 +229,7 @@ public class MainActivityFragment extends Fragment {
 
 
     private void loadMoreMovies() {
-        //Log.i(TAG, "loadMoreMovies: ");
+        Log.i(TAG, "loadMoreMovies: ");
         page_num += 1;
         reloadMovies();
     }
@@ -253,7 +237,7 @@ public class MainActivityFragment extends Fragment {
     // MARK: Build request to webservices using volley framework.
 
     private void loadMovieRequest() {
-        //Log.i(TAG, "loadMovieRequest: page_num->" + page_num);
+        Log.i(TAG, "loadMovieRequest: page_num->" + page_num);
         String JsonURL = Utils.buildMoviesUrl(sort_type, page_num);
 
 
@@ -364,7 +348,7 @@ public class MainActivityFragment extends Fragment {
 
     private void reloadMovies() {
 
-        //Log.i(TAG, "reloadMovies: ");
+        Log.i(TAG, "reloadMovies: ");
 
         if (Utils.isNetworkAvailable(getActivity())) {
             binding.progressBar.setVisibility(View.VISIBLE);
@@ -388,8 +372,8 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void setOnClickListenerOnItems() {
-        //Log.i(TAG, "setOnClickListenerOnItems: ");
-        MovieAdapter.OnItemClickListener onItemClickListener = new MovieAdapter.OnItemClickListener() {
+        Log.i(TAG, "setOnClickListenerOnItems: ");
+        MoviesAdapter.OnItemClickListener onItemClickListener = new MoviesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 if (position < movieAdapter.getItemCount()) {

@@ -2,6 +2,7 @@ package com.sunnyface.popularmovies.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -24,14 +25,15 @@ import java.util.Collection;
  * Created by Kiko Seijo on 14/01/2017.
  * by The Sunnyface.com.
  */
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
     private OnItemClickListener mItemClickListener;
     private Collection<Movie> movies;
 
     private final Context context;
+    private Typeface customFont;
 
-    public MovieAdapter(Context context)
+    public MoviesAdapter(Context context)
     {
         this.context = context;
     }
@@ -40,6 +42,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
     {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.movie_row, null);
+        customFont = Typeface.createFromAsset(this.context.getAssets(),"fonts/Lato-Bold.ttf");
         return new MovieViewHolder(view);
     }
 
@@ -120,6 +123,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             this.movieTitleHolder = (LinearLayout) view.findViewById(R.id.movie_title_holder);
             this.imageView = (ImageView) view.findViewById(R.id.thumbnail);
             this.titleView = (TextView) view.findViewById(R.id.title);
+            this.titleView.setTypeface(customFont);
             this.movieLayout.setOnClickListener(this);
         }
 
